@@ -184,7 +184,8 @@ class WireguardInterfaceController {
         try {
             $mkIface = $this->client->get('/interface/wireguard', ['name' => $interface['name']]);
             if (!empty($mkIface)) {
-                $running = !($mkIface[0]['disabled'] ?? false);
+                $disabled = $mkIface[0]['disabled'] ?? false;
+                $running = ($disabled === false || $disabled === 'false' || $disabled === 0);
             }
         } catch (\Exception $e) { /* ignorar */ }
         
