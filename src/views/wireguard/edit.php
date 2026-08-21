@@ -72,7 +72,7 @@
                 <small class="text-muted">
                     <?php if ($interface['running']): ?>
                         <i class="fas fa-circle" style="color: var(--success); font-size: 8px;"></i> 
-                        Status atual no Mikrotik: <strong>Rodando</strong>
+                        Status atual no Mikrotik: <strong>Ativo</strong>
                     <?php else: ?>
                         <i class="fas fa-circle" style="color: var(--danger); font-size: 8px;"></i> 
                         Status atual no Mikrotik: <strong>Parado</strong>

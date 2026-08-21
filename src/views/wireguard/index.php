@@ -67,7 +67,7 @@
                     <td>
                         <?php if ($iface['running']): ?>
                             <span class="badge badge-success">
-                                <i class="fas fa-circle" style="font-size: 6px; vertical-align: middle;"></i> Rodando
+                                <i class="fas fa-circle" style="font-size: 6px; vertical-align: middle;"></i> Ativo
                             </span>
                         <?php else: ?>
                             <span class="badge badge-danger">
