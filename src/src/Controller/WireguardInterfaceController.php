@@ -50,7 +50,8 @@ class WireguardInterfaceController {
         // Enriquecer dados
         foreach ($interfaces as &$iface) {
             $mk = $mikrotikInterfaces[$iface['name']] ?? null;
-            $iface['running'] = $mk !== null && !($mk['disabled'] ?? false);
+            $disabled = $mk['disabled'] ?? false;
+            $iface['running'] = $mk !== null && ($disabled === false || $disabled === 'false' || $disabled === 0);
             $iface['running_at_time'] = $mk['running-time'] ?? null;
             $iface['mk_id'] = $mk['.id'] ?? null;
             $iface['peer_count'] = $peerCounts[$iface['id']]['total'] ?? 0;
