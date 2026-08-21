@@ -2,12 +2,16 @@
 <?php require __DIR__ . '/../../layouts/header.php'; ?>
 
 <div class="page-header">
-    <h1>
-        <i class="fas fa-edit"></i> Editar Peer
-        <small style="font-size: 14px; color: var(--secondary); font-weight: normal;">
-            — <?= htmlspecialchars($peer['peer_name']) ?>
-        </small>
-    </h1>
+    <div>
+        <nav class="breadcrumb">
+            <a href="/wireguard">WireGuard</a>
+            <span class="breadcrumb-sep">/</span>
+            <a href="/wireguard/peers/<?= $peer['interface_id'] ?>"><?= htmlspecialchars($peer['interface_name'] ?? '') ?></a>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current"><?= htmlspecialchars($peer['peer_name']) ?></span>
+        </nav>
+        <h1><i class="fas fa-edit"></i> Editar Peer</h1>
+    </div>
     <a href="/wireguard/peers/<?= $peer['interface_id'] ?>" class="btn btn-secondary">
         <i class="fas fa-arrow-left"></i> Voltar
     </a>

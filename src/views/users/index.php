@@ -2,7 +2,12 @@
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="page-header">
-    <h1><i class="fas fa-users"></i> Usuários</h1>
+    <div>
+        <nav class="breadcrumb">
+            <span class="breadcrumb-current">Usuários</span>
+        </nav>
+        <h1><i class="fas fa-users"></i> Usuários</h1>
+    </div>
     <a href="/users/create" class="btn btn-primary">
         <i class="fas fa-plus"></i> Novo Usuário
     </a>

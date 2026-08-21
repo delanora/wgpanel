@@ -2,7 +2,12 @@
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="page-header">
-    <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+    <div>
+        <nav class="breadcrumb">
+            <span class="breadcrumb-current">Dashboard</span>
+        </nav>
+        <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+    </div>
     <button onclick="refreshDashboard()" class="btn btn-secondary" id="refreshBtn">
         <i class="fas fa-sync-alt"></i> Atualizar Agora
     </button>

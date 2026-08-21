@@ -2,7 +2,14 @@
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="page-header">
-    <h1><i class="fas fa-plus-circle"></i> Nova Interface WireGuard</h1>
+    <div>
+        <nav class="breadcrumb">
+            <a href="/wireguard">WireGuard</a>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current">Nova Interface</span>
+        </nav>
+        <h1><i class="fas fa-plus-circle"></i> Nova Interface</h1>
+    </div>
     <a href="/wireguard" class="btn btn-secondary">
         <i class="fas fa-arrow-left"></i> Voltar
     </a>

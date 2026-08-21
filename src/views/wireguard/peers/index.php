@@ -2,15 +2,17 @@
 <?php require __DIR__ . '/../../layouts/header.php'; ?>
 
 <div class="page-header">
-    <h1>
-        <i class="fas fa-users"></i> Peers
-        <small style="font-size: 14px; color: var(--secondary); font-weight: normal;">
-            — <?= htmlspecialchars($interface['name']) ?> (<?= htmlspecialchars($interface['client_name']) ?>)
-        </small>
-    </h1>
+    <div>
+        <nav class="breadcrumb">
+            <a href="/wireguard">WireGuard</a>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current"><?= htmlspecialchars($interface['name']) ?></span>
+        </nav>
+        <h1><i class="fas fa-users"></i> Peers</h1>
+    </div>
     <div style="display: flex; gap: 10px;">
         <a href="/wireguard" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Interfaces
+            <i class="fas fa-arrow-left"></i> Voltar
         </a>
         <a href="/wireguard/peers/<?= $interface['id'] ?>/create" class="btn btn-primary">
             <i class="fas fa-plus"></i> Novo Peer

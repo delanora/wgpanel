@@ -2,7 +2,12 @@
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="page-header">
-    <h1><i class="fas fa-user-circle"></i> Meu Perfil</h1>
+    <div>
+        <nav class="breadcrumb">
+            <span class="breadcrumb-current">Perfil</span>
+        </nav>
+        <h1><i class="fas fa-user-circle"></i> Meu Perfil</h1>
+    </div>
 </div>
 
 <?php if (isset($_GET['success']) && $_GET['success'] === 'updated'): ?>

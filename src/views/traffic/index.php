@@ -2,7 +2,12 @@
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="page-header">
-    <h1><i class="fas fa-chart-area"></i> Tráfego WireGuard</h1>
+    <div>
+        <nav class="breadcrumb">
+            <span class="breadcrumb-current">Tráfego</span>
+        </nav>
+        <h1><i class="fas fa-chart-area"></i> Tráfego WireGuard</h1>
+    </div>
     <button onclick="refreshChart()" class="btn btn-secondary" id="refreshBtn">
         <i class="fas fa-sync-alt"></i> Atualizar
     </button>

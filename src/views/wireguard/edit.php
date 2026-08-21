@@ -2,7 +2,14 @@
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="page-header">
-    <h1><i class="fas fa-edit"></i> Editar Interface</h1>
+    <div>
+        <nav class="breadcrumb">
+            <a href="/wireguard">WireGuard</a>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current">Editar</span>
+        </nav>
+        <h1><i class="fas fa-edit"></i> Editar Interface</h1>
+    </div>
     <a href="/wireguard" class="btn btn-secondary">
         <i class="fas fa-arrow-left"></i> Voltar
     </a>
