@@ -39,7 +39,7 @@ loadEnv($envPath);
 // ======================================================
 // Constantes da aplicação
 // ======================================================
-define('APP_NAME', 'Mikrotik Manager');
+define('APP_NAME', 'WG Panel');
 define('APP_VERSION', '1.0.0');
 define('APP_URL', 'http://localhost:8080');
 

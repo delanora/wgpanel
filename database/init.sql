@@ -1,5 +1,5 @@
 -- ============================================
--- Mikrotik Manager - Database Schema
+-- WG Panel - Database Schema
 -- ============================================
 
 -- Tabela de Usuários

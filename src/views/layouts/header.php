@@ -11,14 +11,11 @@
     <?php if (isset($_SESSION['user_id'])): ?>
     <nav class="sidebar">
         <div class="sidebar-header">
-            <h3><i class="fas fa-tower-broadcast"></i> Mikrotik Manager</h3>
+            <h3><svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin-right: 2px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor" opacity="0.3"/><path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="currentColor"/></svg> WG Panel</h3>
         </div>
         <ul class="nav-menu">
             <li><a href="/dashboard" class="<?= $_SERVER['REQUEST_URI'] === '/dashboard' ? 'active' : '' ?>">
                 <i class="fas fa-chart-line"></i> Dashboard
-            </a></li>
-            <li><a href="/mikrotik" class="<?= str_contains($_SERVER['REQUEST_URI'], '/mikrotik') ? 'active' : '' ?>">
-                <i class="fas fa-tower-broadcast"></i> Mikrotik
             </a></li>
             <li><a href="/wireguard" class="<?= str_contains($_SERVER['REQUEST_URI'], '/wireguard') ? 'active' : '' ?>">
                 <i class="fas fa-shield-halved"></i> WireGuard

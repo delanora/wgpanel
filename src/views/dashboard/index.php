@@ -11,7 +11,7 @@
 <!-- Stats -->
 <div class="stats-grid">
     <div class="stat-card">
-        <div class="stat-icon" style="background: var(--primary);"><i class="fas fa-shield-halved"></i></div>
+        <div class="stat-icon icon-accent"><i class="fas fa-shield-halved"></i></div>
         <div class="stat-info">
             <h3><?= $data['active_interfaces'] ?> / <?= $data['total_interfaces'] ?></h3>
             <p>Interfaces WireGuard</p>
@@ -19,7 +19,7 @@
     </div>
     
     <div class="stat-card">
-        <div class="stat-icon" style="background: var(--success);"><i class="fas fa-users"></i></div>
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
         <div class="stat-info">
             <h3><?= $data['active_peers'] ?> / <?= $data['total_peers'] ?></h3>
             <p>Peers Ativos</p>
@@ -27,7 +27,7 @@
     </div>
     
     <div class="stat-card">
-        <div class="stat-icon" style="background: var(--success);"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-icon icon-accent"><i class="fas fa-check-circle"></i></div>
         <div class="stat-info">
             <h3><?= count($data['connected_peers'] ?? []) ?></h3>
             <p>Peers Conectados</p>
@@ -35,7 +35,7 @@
     </div>
     
     <div class="stat-card">
-        <div class="stat-icon" style="background: var(--secondary);"><i class="fas fa-users-gear"></i></div>
+        <div class="stat-icon"><i class="fas fa-users-gear"></i></div>
         <div class="stat-info">
             <h3><?= $data['active_users'] ?></h3>
             <p>Usuários do Sistema</p>
@@ -141,7 +141,7 @@ chartData.forEach(function(row) {
     datasets[row.interface_name].labels.push(row.hour);
 });
 
-var colors = ['#39ff14', '#6ec6ff', '#ffb340', '#ff4757', '#a78bfa', '#f472b6'];
+var colors = ['#4ade80', '#6ec6ff', '#ffb340', '#ff4757', '#a78bfa', '#f472b6'];
 var datasetsArray = [];
 var allLabels = [];
 Object.keys(datasets).forEach(function(name, idx) {

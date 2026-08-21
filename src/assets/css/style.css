@@ -1,5 +1,5 @@
 /* ============================================
-   Mikrotik Manager - Dark Theme
+   WG Panel - Dark Theme
    ============================================ */
 
 /* Reset e Variáveis */
@@ -16,12 +16,12 @@
     --text-secondary: #8a8a95;
     --text-muted: #5a5a65;
 
-    --accent: #39ff14;
-    --accent-dim: #2bcc10;
-    --accent-bg: rgba(57, 255, 20, 0.08);
-    --accent-border: rgba(57, 255, 20, 0.2);
+    --accent: #4ade80;
+    --accent-dim: #22c55e;
+    --accent-bg: rgba(74, 222, 128, 0.08);
+    --accent-border: rgba(74, 222, 128, 0.2);
 
-    --success: #39ff14;
+    --success: #4ade80;
     --danger: #ff4757;
     --warning: #ffb340;
     --info: #6ec6ff;
@@ -56,7 +56,7 @@ a {
     text-decoration: none;
     transition: color 0.2s;
 }
-a:hover { color: #5fff42; }
+a:hover { color: #6ee7a0; }
 
 /* ============================================
    Login Page
@@ -291,14 +291,20 @@ main.full-page {
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: var(--accent-bg);
-    border: 1px solid var(--accent-border);
-    color: var(--accent);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
     flex-shrink: 0;
+}
+
+.stat-icon.icon-accent {
+    background: var(--accent-bg);
+    border-color: var(--accent-border);
+    color: var(--accent);
 }
 
 .stat-info h3 {
@@ -447,9 +453,9 @@ main.full-page {
 }
 
 .btn-primary:hover {
-    background: #5fff42;
+    background: #6ee7a0;
     color: #0a0a0b;
-    box-shadow: 0 0 16px rgba(57, 255, 20, 0.2);
+    box-shadow: 0 0 16px rgba(74, 222, 128, 0.15);
 }
 
 .btn-secondary {
@@ -505,7 +511,7 @@ main.full-page {
 }
 
 .alert-success {
-    background: rgba(57, 255, 20, 0.06);
+    background: rgba(74, 222, 128, 0.06);
     color: var(--accent);
     border-color: var(--accent-border);
 }
@@ -537,7 +543,7 @@ main.full-page {
 }
 
 .badge-success {
-    background: rgba(57, 255, 20, 0.1);
+    background: rgba(74, 222, 128, 0.1);
     color: var(--accent);
     border: 1px solid var(--accent-border);
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Mikrotik Manager - Front Controller
+ * WG Panel - Front Controller
  * Todas as requisições passam por aqui
  */
 

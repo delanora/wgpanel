@@ -51,7 +51,7 @@
 <?php if ($selectedInterface > 0): ?>
 <div class="stats-grid" style="margin-bottom: 20px;">
     <div class="stat-card">
-        <div class="stat-icon" style="background: var(--success);"><i class="fas fa-arrow-down"></i></div>
+        <div class="stat-icon icon-accent"><i class="fas fa-arrow-down"></i></div>
         <div class="stat-info">
             <h3><?= \App\Controller\WireguardPeerController::formatBytes((int) $summary['total_rx']) ?></h3>
             <p>Total Recebido (RX)</p>
@@ -59,7 +59,7 @@
     </div>
     
     <div class="stat-card">
-        <div class="stat-icon" style="background: var(--info);"><i class="fas fa-arrow-up"></i></div>
+        <div class="stat-icon"><i class="fas fa-arrow-up"></i></div>
         <div class="stat-info">
             <h3><?= \App\Controller\WireguardPeerController::formatBytes((int) $summary['total_tx']) ?></h3>
             <p>Total Enviado (TX)</p>
@@ -67,7 +67,7 @@
     </div>
     
     <div class="stat-card">
-        <div class="stat-icon" style="background: var(--warning);"><i class="fas fa-bolt"></i></div>
+        <div class="stat-icon"><i class="fas fa-bolt"></i></div>
         <div class="stat-info">
             <h3><?= \App\Controller\WireguardPeerController::formatBytes((int) $summary['peak_rx']) ?></h3>
             <p>Pico RX</p>
@@ -75,7 +75,7 @@
     </div>
     
     <div class="stat-card">
-        <div class="stat-icon" style="background: var(--primary);"><i class="fas fa-bolt"></i></div>
+        <div class="stat-icon"><i class="fas fa-bolt"></i></div>
         <div class="stat-info">
             <h3><?= \App\Controller\WireguardPeerController::formatBytes((int) $summary['peak_tx']) ?></h3>
             <p>Pico TX</p>
@@ -121,7 +121,7 @@ var chart = new Chart(document.getElementById('trafficChart'), {
             {
                 label: 'Recebido (RX)',
                 data: rxData,
-                borderColor: '#39ff14',
+                borderColor: '#4ade80',
                 backgroundColor: 'rgba(57, 255, 20, 0.1)',
                 fill: true,
                 tension: 0.3,

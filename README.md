@@ -1,4 +1,4 @@
-# Mikrotik Manager
+# WG Panel
 
 Aplicação web para gerenciamento de roteadores Mikrotik RouterOS.
 

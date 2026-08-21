@@ -1,5 +1,5 @@
 /**
- * Mikrotik Manager - JavaScript Principal
+ * WG Panel - JavaScript Principal
  */
 
 document.addEventListener('DOMContentLoaded', function() {

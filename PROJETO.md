@@ -1,4 +1,4 @@
-# Mikrotik Manager
+# WG Panel
 
 ## O que é
 
