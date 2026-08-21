@@ -141,7 +141,7 @@ chartData.forEach(function(row) {
     datasets[row.interface_name].labels.push(row.hour);
 });
 
-var colors = ['#4ade80', '#6ec6ff', '#ffb340', '#ff4757', '#a78bfa', '#f472b6'];
+var colors = ['#0ea5e9', '#38bdf8', '#64748b', '#94a3b8', '#a78bfa', '#f472b6'];
 var datasetsArray = [];
 var allLabels = [];
 Object.keys(datasets).forEach(function(name, idx) {

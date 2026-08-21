@@ -62,10 +62,10 @@
                     </td>
                     <td><?= $user['last_login'] ? date('d/m/Y H:i', strtotime($user['last_login'])) : 'Nunca' ?></td>
                     <td class="actions">
-                        <a href="/users/edit/<?= $user['id'] ?>" class="btn btn-sm btn-secondary" title="Editar">
+                        <a href="/users/edit/<?= $user['id'] ?>" class="btn btn-ghost" title="Editar">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a href="/users/delete/<?= $user['id'] ?>" class="btn btn-sm btn-danger" title="Excluir"
+                        <a href="/users/delete/<?= $user['id'] ?>" class="btn btn-ghost btn-danger" title="Excluir"
                            onclick="return confirm('Tem certeza que deseja excluir este usuário?')">
                             <i class="fas fa-trash"></i>
                         </a>

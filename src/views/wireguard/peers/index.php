@@ -126,13 +126,13 @@
                         </small>
                     </td>
                     <td class="actions">
-                        <a href="/wireguard/peers/config/<?= $peer['id'] ?>" class="btn btn-sm btn-primary" title="Ver Config">
+                        <a href="/wireguard/peers/config/<?= $peer['id'] ?>" class="btn btn-ghost" title="Ver Config">
                             <i class="fas fa-file-code"></i>
                         </a>
-                        <a href="/wireguard/peers/edit/<?= $peer['id'] ?>" class="btn btn-sm btn-secondary" title="Editar">
+                        <a href="/wireguard/peers/edit/<?= $peer['id'] ?>" class="btn btn-ghost" title="Editar">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a href="/wireguard/peers/delete/<?= $peer['id'] ?>" class="btn btn-sm btn-danger" title="Excluir"
+                        <a href="/wireguard/peers/delete/<?= $peer['id'] ?>" class="btn btn-ghost btn-danger" title="Excluir"
                            onclick="return confirm('Excluir peer <?= htmlspecialchars($peer['peer_name']) ?>?')">
                             <i class="fas fa-trash"></i>
                         </a>

@@ -121,8 +121,8 @@ var chart = new Chart(document.getElementById('trafficChart'), {
             {
                 label: 'Recebido (RX)',
                 data: rxData,
-                borderColor: '#4ade80',
-                backgroundColor: 'rgba(57, 255, 20, 0.1)',
+                borderColor: '#0ea5e9',
+                backgroundColor: 'rgba(14, 165, 233, 0.1)',
                 fill: true,
                 tension: 0.3,
                 borderWidth: 2,

@@ -77,13 +77,13 @@
                         <span class="badge badge-info"><?= $iface['peer_active_count'] ?> / <?= $iface['peer_count'] ?></span>
                     </td>
                     <td class="actions">
-                        <a href="/wireguard/peers/<?= $iface['id'] ?>" class="btn btn-sm btn-primary" title="Gerenciar Peers">
-                            <i class="fas fa-users"></i> Peers
+                        <a href="/wireguard/peers/<?= $iface['id'] ?>" class="btn btn-ghost" title="Gerenciar Peers">
+                            <i class="fas fa-users"></i>
                         </a>
-                        <a href="/wireguard/edit/<?= $iface['id'] ?>" class="btn btn-sm btn-secondary" title="Editar">
+                        <a href="/wireguard/edit/<?= $iface['id'] ?>" class="btn btn-ghost" title="Editar">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a href="/wireguard/delete/<?= $iface['id'] ?>" class="btn btn-sm btn-danger" title="Excluir"
+                        <a href="/wireguard/delete/<?= $iface['id'] ?>" class="btn btn-ghost btn-danger" title="Excluir"
                            onclick="return confirm('Tem certeza que deseja excluir a interface <?= htmlspecialchars($iface['name']) ?>? Isso removerá também todos os peers associados.')">
                             <i class="fas fa-trash"></i>
                         </a>
