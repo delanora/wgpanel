@@ -68,12 +68,12 @@
                 </div>
             </div>
             
-            <div class="card" style="background: #eff6ff; border: 1px solid #bfdbfe; margin-top: 10px;">
+            <div class="card" style="background: var(--accent-bg); border: 1px solid var(--accent-border); margin-top: 10px;">
                 <div class="card-body" style="padding: 15px;">
-                    <h4 style="font-size: 14px; margin-bottom: 8px;">
-                        <i class="fas fa-lightbulb" style="color: #2563eb;"></i> O que acontecerá:
+                    <h4 style="font-size: 14px; margin-bottom: 8px; color: var(--accent);">
+                        <i class="fas fa-lightbulb"></i> O que acontecerá:
                     </h4>
-                    <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: #1e40af;">
+                    <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: var(--text-secondary);">
                         <li>Uma interface WireGuard será criada no Mikrotik</li>
                         <li>O IP do servidor (primeiro IP da rede) será atribuído automaticamente</li>
                         <li>A public key será salva no banco de dados</li>

@@ -121,8 +121,8 @@ var chart = new Chart(document.getElementById('trafficChart'), {
             {
                 label: 'Recebido (RX)',
                 data: rxData,
-                borderColor: '#22c55e',
-                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                borderColor: '#39ff14',
+                backgroundColor: 'rgba(57, 255, 20, 0.1)',
                 fill: true,
                 tension: 0.3,
                 borderWidth: 2,
@@ -131,8 +131,8 @@ var chart = new Chart(document.getElementById('trafficChart'), {
             {
                 label: 'Enviado (TX)',
                 data: txData,
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderColor: '#6ec6ff',
+                backgroundColor: 'rgba(110, 198, 255, 0.1)',
                 fill: true,
                 tension: 0.3,
                 borderWidth: 2,

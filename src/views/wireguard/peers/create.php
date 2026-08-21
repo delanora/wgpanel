@@ -84,12 +84,12 @@
                           placeholder="Informações adicionais sobre este peer..."><?= htmlspecialchars($_POST['notes'] ?? '') ?></textarea>
             </div>
             
-            <div class="card" style="background: #f0fdf4; border: 1px solid #bbf7d0; margin-top: 10px;">
+            <div class="card" style="background: var(--accent-bg); border: 1px solid var(--accent-border); margin-top: 10px;">
                 <div class="card-body" style="padding: 15px;">
-                    <h4 style="font-size: 14px; margin-bottom: 8px;">
-                        <i class="fas fa-lightbulb" style="color: #16a34a;"></i> O que acontecerá:
+                    <h4 style="font-size: 14px; margin-bottom: 8px; color: var(--accent);">
+                        <i class="fas fa-lightbulb"></i> O que acontecerá:
                     </h4>
-                    <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: #166534;">
+                    <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: var(--text-secondary);">
                         <li>Par de chaves (private/public) será gerado pelo Mikrotik automaticamente</li>
                         <li>A config completa do cliente será gerada (.conf pronta para importar)</li>
                         <li>Os dados serão salvos no banco para gerenciamento futuro</li>
