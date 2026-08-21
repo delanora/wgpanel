@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS wireguard_peers (
     contact_name VARCHAR(255) NOT NULL DEFAULT '',
     contact_email VARCHAR(255) NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT '',
+    additional_routes TEXT NOT NULL DEFAULT '',
     status VARCHAR(20) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'disabled')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

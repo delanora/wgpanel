@@ -135,6 +135,7 @@ setup_database() {
     sudo -u postgres psql -d "$DB_NAME" -f "$APP_DIR/database/init.sql" 2>/dev/null || true
     sudo -u postgres psql -d "$DB_NAME" -f "$APP_DIR/database/002_wireguard_tables.sql" 2>/dev/null || true
     sudo -u postgres psql -d "$DB_NAME" -f "$APP_DIR/database/003_wireguard_traffic_log.sql" 2>/dev/null || true
+    sudo -u postgres psql -d "$DB_NAME" -f "$APP_DIR/database/004_add_additional_routes.sql" 2>/dev/null || true
     
     # Conceder permissões
     sudo -u postgres psql -d "$DB_NAME" -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER;" 2>/dev/null || true
