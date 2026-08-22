@@ -110,6 +110,7 @@ MIGRATIONS=(
     "database/002_wireguard_tables.sql"
     "database/003_wireguard_traffic_log.sql"
     "database/004_add_additional_routes.sql"
+    "database/005_latency_log.sql"
 )
 
 APPLIED=0
@@ -164,9 +165,18 @@ if ! crontab -l 2>/dev/null | grep -q "collect_traffic.php"; then
     log_info "Configurando cron de coleta de tráfego..."
     CRON_LINE="*/5 * * * * /usr/bin/php $APP_DIR/src/cron/collect_traffic.php >> /tmp/wireguard_traffic.log 2>&1"
     (crontab -l 2>/dev/null; echo "$CRON_LINE") | crontab -
-    log_success "Cron configurado"
+    log_success "Cron de tráfego configurado"
 else
-    log_warn "Cron já configurado"
+    log_warn "Cron de tráfego já configurado"
+fi
+
+if ! crontab -l 2>/dev/null | grep -q "collect_latency.php"; then
+    log_info "Configurando cron de coleta de latência..."
+    CRON_LINE_LAT="*/5 * * * * /usr/bin/php $APP_DIR/src/cron/collect_latency.php >> /tmp/wireguard_latency.log 2>&1"
+    (crontab -l 2>/dev/null; echo "$CRON_LINE_LAT") | crontab -
+    log_success "Cron de latência configurado"
+else
+    log_warn "Cron de latência já configurado"
 fi
 
 # ============================================

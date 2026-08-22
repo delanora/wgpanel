@@ -32,10 +32,10 @@
     </div>
     
     <div class="stat-card">
-        <div class="stat-icon icon-accent"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-icon icon-accent"><i class="fas fa-signal"></i></div>
         <div class="stat-info">
-            <h3><?= count($data['connected_peers'] ?? []) ?></h3>
-            <p>Peers Conectados</p>
+            <h3><?= count(array_filter($data['latency_data'] ?? [], fn($l) => $l['rtt_avg_ms'] !== null)) ?> / <?= count($data['latency_data'] ?? []) ?></h3>
+            <p>Alvos Respondendo</p>
         </div>
     </div>
     
@@ -48,32 +48,90 @@
     </div>
 </div>
 
-<!-- Peers Conectados -->
-<?php if (!empty($data['connected_peers'])): ?>
-<div class="card" style="margin-bottom: 20px; border-left: 4px solid var(--success);">
-    <div class="card-header">
-        <h2 style="color: var(--success);"><i class="fas fa-check-circle"></i> Peers Conectados</h2>
+<!-- Monitoramento de Latência -->
+<div class="card" style="margin-bottom: 20px;">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2><i class="fas fa-tower-broadcast"></i> Monitoramento de Latência</h2>
+        <button onclick="refreshLatency()" class="btn btn-ghost" id="latencyBtn" style="font-size: 12px;">
+            <i class="fas fa-sync-alt"></i> Atualizar
+        </button>
     </div>
     <div class="card-body" style="padding: 0;">
         <table class="table">
             <thead>
                 <tr>
-                    <th>Peer</th>
-                    <th>Interface</th>
-                    <th>IP</th>
-                    <th>Contato</th>
-                    <th>Último Handshake</th>
+                    <th></th>
+                    <th>Alvo</th>
+                    <th style="text-align: right;">Latência (RTT)</th>
+                    <th style="text-align: right;">Perda de Pacote</th>
+                    <th style="text-align: right;">Última Verificação</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($data['connected_peers'] as $cp): ?>
+                <?php
+                // Ícones SVG inline para cada serviço
+                $icons = [
+                    'Google' => '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align: middle;"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>',
+                    'Cloudflare' => '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align: middle;"><path fill="#F38020" d="M16.5 18h-9a.5.5 0 0 1 0-1h9a.5.5 0 0 1 0 1zm2.54-3.5l-.5.04c-.47.03-.84-.36-.84-.83 0-.39.25-.72.59-.84l.09-.03a.5.5 0 0 1 .48.87l-.08.03a.33.33 0 0 0-.24.59l.5-.04zm-1.88-1.33h.01a.5.5 0 0 1 0-1h.01a.5.5 0 0 1 0 1zm4.86-2.24a.5.5 0 0 1-.32-.91l.09-.07a.5.5 0 1 1 .63.78l-.08.06a.5.5 0 0 1-.32.14zM6.46 13.17l-.5.04a.5.5 0 0 1-.48-.52.5.5 0 0 1 .52-.48l.5.04c.47.03.84.36.84.83 0 .2-.09.38-.24.5l-.09.03a.5.5 0 0 1-.55-.44zm10.4-5.73a.5.5 0 0 1-.42-.76l.07-.1a.5.5 0 1 1 .85.52l-.07.1a.5.5 0 0 1-.43.24zM3.71 8.17a.5.5 0 0 1-.34-.88l.07-.05a.5.5 0 1 1 .55.85l-.07.05a.5.5 0 0 1-.21.03zm13.58 6.2h-.01a.5.5 0 0 1 0-1h.01a.5.5 0 0 1 0 1z"/></svg>',
+                    'Registro.br' => '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align: middle;"><circle cx="12" cy="12" r="10" fill="#009846"/><text x="12" y="16" text-anchor="middle" fill="white" font-size="10" font-weight="bold">.br</text></svg>',
+                    'Microsoft 365' => '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align: middle;"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="13" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="13" width="10" height="10" fill="#00A4EF"/><rect x="13" y="13" width="10" height="10" fill="#FFB900"/></svg>',
+                    'WhatsApp' => '<svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align: middle;"><path fill="#25D366" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path fill="#25D366" d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.634-1.22A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.09 0-4.045-.554-5.726-1.52l-.41-.24-2.734.718.727-2.665-.268-.425A9.694 9.694 0 0 1 2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg>',
+                ];
+                
+                foreach ($data['latency_data'] as $latency):
+                    $rtt = $latency['rtt_avg_ms'];
+                    $loss = $latency['packet_loss_pct'];
+                    $hasResponse = $rtt !== null;
+                    
+                    // Determinar cor
+                    if (!$hasResponse || $loss === 100) {
+                        $statusColor = '#ef4444'; // Vermelho
+                        $statusLabel = 'Sem resposta';
+                    } elseif ($rtt > 150 || $loss > 20) {
+                        $statusColor = '#ef4444'; // Vermelho
+                        $statusLabel = round($rtt, 1) . 'ms';
+                    } elseif ($rtt > 50 || $loss >= 1) {
+                        $statusColor = '#eab308'; // Amarelo
+                        $statusLabel = round($rtt, 1) . 'ms';
+                    } else {
+                        $statusColor = '#22c55e'; // Verde
+                        $statusLabel = round($rtt, 1) . 'ms';
+                    }
+                ?>
                 <tr>
-                    <td><strong><?= htmlspecialchars($cp['peer_name']) ?></strong></td>
-                    <td><?= htmlspecialchars($cp['interface_name']) ?></td>
-                    <td><code><?= htmlspecialchars($cp['allowed_address']) ?></code></td>
-                    <td><?= htmlspecialchars($cp['contact_name'] ?: '-') ?></td>
+                    <td style="width: 40px; text-align: center;">
+                        <?= $icons[$latency['label']] ?? '<i class="fas fa-globe" style="color: var(--text-muted);"></i>' ?>
+                    </td>
                     <td>
-                        <span class="badge badge-success"><?= htmlspecialchars($cp['last_handshake']) ?> atrás</span>
+                        <strong><?= htmlspecialchars($latency['label']) ?></strong>
+                        <span style="color: var(--text-muted); font-size: 12px; margin-left: 6px;"><?= htmlspecialchars($latency['target']) ?></span>
+                    </td>
+                    <td style="text-align: right;">
+                        <?php if ($hasResponse): ?>
+                            <span style="color: <?= $statusColor ?>; font-weight: 600; font-family: var(--font-mono); font-size: 14px;">
+                                <?= $statusLabel ?>
+                            </span>
+                        <?php else: ?>
+                            <span style="color: <?= $statusColor ?>; font-weight: 600; font-size: 13px;">
+                                <?= $statusLabel ?>
+                            </span>
+                        <?php endif; ?>
+                    </td>
+                    <td style="text-align: right;">
+                        <?php if ($loss == 0): ?>
+                            <span style="color: var(--success); font-size: 13px;">0%</span>
+                        <?php elseif ($loss <= 20): ?>
+                            <span style="color: var(--warning); font-size: 13px;"><?= round($loss) ?>%</span>
+                        <?php else: ?>
+                            <span style="color: var(--danger); font-size: 13px;"><?= round($loss) ?>%</span>
+                        <?php endif; ?>
+                    </td>
+                    <td style="text-align: right; color: var(--text-muted); font-size: 12px;">
+                        <?php if ($latency['checked_at']): ?>
+                            <?= date('d/m H:i', strtotime($latency['checked_at'])) ?>
+                        <?php else: ?>
+                            —
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -81,7 +139,6 @@
         </table>
     </div>
 </div>
-<?php endif; ?>
 
 <!-- Gráfico de Tráfego -->
 <div class="card" style="margin-bottom: 20px;">
@@ -225,13 +282,32 @@ if (datasetsArray.length > 0) {
 }
 <?php endif; ?>
 
-// Refresh
+// Refresh Dashboard (tráfego + latência)
 function refreshDashboard() {
     var btn = document.getElementById('refreshBtn');
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Coletando...';
     
-    fetch('/dashboard/collect-traffic', { method: 'POST' })
+    // Coletar tráfego e latência em paralelo
+    Promise.all([
+        fetch('/dashboard/collect-traffic', { method: 'POST' }).then(function(r) { return r.json(); }),
+        fetch('/dashboard/collect-latency', { method: 'POST' }).then(function(r) { return r.json(); })
+    ]).then(function(results) {
+        window.location.reload();
+    }).catch(function(err) {
+        alert('Erro de conexão: ' + err);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar Agora';
+    });
+}
+
+// Refresh só latência
+function refreshLatency() {
+    var btn = document.getElementById('latencyBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Pingando...';
+    
+    fetch('/dashboard/collect-latency', { method: 'POST' })
         .then(function(r) { return r.json(); })
         .then(function(data) {
             if (data.success) {
@@ -239,13 +315,13 @@ function refreshDashboard() {
             } else {
                 alert('Erro: ' + (data.error || 'Desconhecido'));
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar Agora';
+                btn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar';
             }
         })
         .catch(function(err) {
             alert('Erro de conexão: ' + err);
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar Agora';
+            btn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar';
         });
 }
 

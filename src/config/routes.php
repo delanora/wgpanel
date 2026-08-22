@@ -42,6 +42,7 @@ $router->get('/logout', [AuthController::class, 'logout']);
 // ============================
 $router->get('/dashboard', [DashboardController::class, 'index'], ['Auth']);
 $router->post('/dashboard/collect-traffic', [DashboardController::class, 'collectTraffic'], ['Auth']);
+$router->post('/dashboard/collect-latency', [DashboardController::class, 'collectLatency'], ['Auth']);
 $router->get('/users', [UserController::class, 'index'], ['Auth']);
 $router->get('/users/create', [UserController::class, 'create'], ['Auth']);
 $router->post('/users/store', [UserController::class, 'store'], ['Auth']);

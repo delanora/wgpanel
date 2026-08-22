@@ -23,7 +23,8 @@ class DashboardController {
             'active_interfaces' => 0,
             'total_peers' => 0,
             'active_peers' => 0,
-            'disconnected_peers' => [],
+            // Latência
+            'latency_data' => [],
             // Tráfego
             'traffic_by_interface' => [],
             'traffic_labels' => [],
@@ -41,43 +42,23 @@ class DashboardController {
         $data['total_peers'] = count($allPeers);
         $data['active_peers'] = count(array_filter($allPeers, fn($p) => $p['status'] === 'active'));
         
-        // Status ao vivo do Mikrotik (conectados)
-        try {
-            $mkPeers = $this->client->get('/interface/wireguard/peers');
-            $mkPeersByKey = [];
-            if (is_array($mkPeers)) {
-                foreach ($mkPeers as $mp) {
-                    $mkPeersByKey[$mp['public-key'] ?? ''] = $mp;
-                }
-            }
+        // Latência — última leitura de cada alvo
+        $latencyTargets = ['8.8.8.8', '1.1.1.1', 'registro.br', 'outlook.office365.com', 'whatsapp.com'];
+        $latencyLabels = ['8.8.8.8' => 'Google', '1.1.1.1' => 'Cloudflare', 'registro.br' => 'Registro.br', 'outlook.office365.com' => 'Microsoft 365', 'whatsapp.com' => 'WhatsApp'];
+        
+        foreach ($latencyTargets as $target) {
+            $latest = \Database::fetch(
+                'SELECT * FROM latency_log WHERE target = ? ORDER BY checked_at DESC LIMIT 1',
+                [$target]
+            );
             
-            $now = time();
-            foreach ($allPeers as $peer) {
-                if ($peer['status'] !== 'active') continue;
-                
-                $mk = $mkPeersByKey[$peer['public_key']] ?? null;
-                $lastHandshake = $mk['last-handshake'] ?? 'never';
-                
-                $connected = false;
-                if ($lastHandshake !== '' && $lastHandshake !== 'never' && $lastHandshake !== '0s') {
-                    $hsTime = $this->parseRelativeTime($lastHandshake);
-                    if ($hsTime !== null && ($now - $hsTime) <= 180) {
-                        $connected = true;
-                    }
-                }
-                
-                if ($connected) {
-                    $data['connected_peers'][] = [
-                        'peer_name' => $peer['peer_name'],
-                        'interface_name' => $peer['interface_name'],
-                        'allowed_address' => $peer['allowed_address'],
-                        'last_handshake' => $lastHandshake,
-                        'contact_name' => $peer['contact_name'],
-                    ];
-                }
-            }
-        } catch (\Exception $e) {
-            // Ignorar erro de conexão
+            $data['latency_data'][] = [
+                'target'          => $target,
+                'label'           => $latencyLabels[$target],
+                'rtt_avg_ms'      => $latest ? $latest['rtt_avg_ms'] : null,
+                'packet_loss_pct' => $latest ? $latest['packet_loss_pct'] : null,
+                'checked_at'      => $latest ? $latest['checked_at'] : null,
+            ];
         }
         
         // Tráfego agregado por interface (últimas 288 registros = 24h se cron a cada 5min)
@@ -163,6 +144,92 @@ class DashboardController {
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
+    }
+    
+    /**
+     * Coleta latência sob demanda (botão "Atualizar Agora").
+     */
+    public function collectLatency(): void {
+        header('Content-Type: application/json');
+        
+        $targets = [
+            ['target' => '8.8.8.8',              'label' => 'Google'],
+            ['target' => '1.1.1.1',              'label' => 'Cloudflare'],
+            ['target' => 'registro.br',          'label' => 'Registro.br'],
+            ['target' => 'outlook.office365.com', 'label' => 'Microsoft 365'],
+            ['target' => 'whatsapp.com',         'label' => 'WhatsApp'],
+        ];
+        
+        $count = 0;
+        
+        foreach ($targets as $t) {
+            try {
+                $result = $this->client->post('/ping', [
+                    'address' => $t['target'],
+                    'count' => '4',
+                ]);
+                
+                $rttValues = [];
+                $totalPackets = 4;
+                $receivedPackets = 0;
+                
+                if (is_array($result)) {
+                    foreach ($result as $packet) {
+                        $time = $packet['time'] ?? '';
+                        if ($time !== '' && $time !== '0') {
+                            $receivedPackets++;
+                            $rttValues[] = self::parseRtt($time);
+                        }
+                    }
+                }
+                
+                $rttAvg = !empty($rttValues) ? round(array_sum($rttValues) / count($rttValues), 2) : null;
+                $packetLoss = $totalPackets > 0
+                    ? round((($totalPackets - $receivedPackets) / $totalPackets) * 100, 2)
+                    : 100;
+                
+                if ($receivedPackets === 0) {
+                    $rttAvg = null;
+                    $packetLoss = 100;
+                }
+                
+                \Database::insert('latency_log', [
+                    'target'           => $t['target'],
+                    'target_label'     => $t['label'],
+                    'rtt_avg_ms'       => $rttAvg,
+                    'packet_loss_pct'  => $packetLoss,
+                    'checked_at'       => date('Y-m-d H:i:s'),
+                ]);
+                
+                $count++;
+                
+            } catch (\Exception $e) {
+                \Database::insert('latency_log', [
+                    'target'           => $t['target'],
+                    'target_label'     => $t['label'],
+                    'rtt_avg_ms'       => null,
+                    'packet_loss_pct'  => 100,
+                    'checked_at'       => date('Y-m-d H:i:s'),
+                ]);
+                $count++;
+            }
+        }
+        
+        echo json_encode(['success' => true, 'count' => $count]);
+    }
+    
+    /**
+     * Parseia tempo RTT do Mikrotik (formato '12ms299us') para float em ms.
+     */
+    private static function parseRtt(string $time): float {
+        $ms = 0.0;
+        if (preg_match('/(\d+(\.\d+)?)ms/', $time, $m)) {
+            $ms = (float) $m[1];
+        }
+        if (preg_match('/(\d+(\.\d+)?)us/', $time, $m)) {
+            $ms += (float) $m[1] / 1000;
+        }
+        return round($ms, 2);
     }
     
     private function parseRelativeTime(string $time): ?int {
