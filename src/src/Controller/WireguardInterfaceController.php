@@ -11,8 +11,8 @@ class WireguardInterfaceController {
     /** @var array Parâmetros da rota injetados pelo Router */
     public array $_routeParams = [];
     
-    public function __construct() {
-        $this->client = MikrotikClient::fromEnv();
+    public function __construct(\App\Service\MikrotikClient $client = null) {
+        $this->client = $client ?? MikrotikClient::fromEnv();
     }
     
     /**

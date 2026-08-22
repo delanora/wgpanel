@@ -9,8 +9,8 @@ class MikrotikController {
     public array $_routeParams = [];
     private MikrotikClient $client;
     
-    public function __construct() {
-        $this->client = MikrotikClient::fromEnv();
+    public function __construct(\App\Service\MikrotikClient $client = null) {
+        $this->client = $client ?? MikrotikClient::fromEnv();
     }
     
     public function index(): void {

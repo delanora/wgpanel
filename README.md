@@ -203,6 +203,79 @@ print_r(\$c->systemIdentity());
 "
 ```
 
+## Testes
+
+O projeto possui uma suíte de testes automatizados com PHPUnit 11.
+
+### Configurar banco de testes
+
+```bash
+# Criar banco mikrotik_manager_test (separado do banco de produção)
+sudo -u postgres psql -c "CREATE DATABASE mikrotik_manager_test OWNER postgres;"
+sudo -u postgres psql -d mikrotik_manager_test -c "GRANT ALL ON SCHEMA public TO postgres;"
+sudo -u postgres psql -d mikrotik_manager_test -f database/init.sql
+sudo -u postgres psql -d mikrotik_manager_test -f database/002_wireguard_tables.sql
+sudo -u postgres psql -d mikrotik_manager_test -f database/003_wireguard_traffic_log.sql
+
+# Dar ownership de todas as tabelas
+sudo -u postgres psql -d mikrotik_manager_test -c "
+  ALTER TABLE users OWNER TO postgres;
+  ALTER TABLE sessions OWNER TO postgres;
+  ALTER TABLE wireguard_interfaces OWNER TO postgres;
+  ALTER TABLE wireguard_peers OWNER TO postgres;
+  ALTER TABLE wireguard_traffic_log OWNER TO postgres;
+  GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO postgres;
+  GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO postgres;
+"
+```
+
+### Rodar testes
+
+```bash
+# Instalar dependências de dev (composer + phpunit)
+COMPOSER_ALLOW_SUPERUSER=1 composer install
+
+# Rodar todos os testes
+composer test
+
+# Rodar apenas testes unitários
+composer test:unit
+
+# Rodar apenas testes de integração
+composer test:integration
+
+# Rodar com testdox (formato legível)
+vendor/bin/phpunit --configuration phpunit.xml --testdox
+
+# Rodar um teste específico
+vendor/bin/phpunit --filter testSuccessfulCreation
+```
+
+### Estrutura de testes
+
+```
+tests/
+├── bootstrap.php              # Autoloader + config de teste
+├── setup_test_db.php          # Script para criar banco de teste
+├── Unit/
+│   ├── Service/
+│   │   ├── MikrotikClientTest.php        # 13 testes: GET, POST, erros, timeout, proplist
+│   │   └── MockTransport.php             # Mock HTTP para testes
+│   └── Middleware/
+│       └── AuthMiddlewareTest.php         # 6 testes: sessão, timeout, redirect
+└── Integration/
+    ├── IntegrationTestCase.php            # Base class com helpers de DB
+    ├── WireguardInterfaceControllerTest.php  # 4 testes: criação, rollback, sugestões
+    └── WireguardPeerControllerTest.php       # 4 testes: criação, rollback, IP, config
+```
+
+### Observações
+
+- Os testes usam banco `mikrotik_manager_test` (não toca no banco de produção)
+- MikrotikClient é testado via `MockTransport` (não depende de Mikrotik real)
+- Controllers testados com `MockTransport` + banco real de teste
+- `AuthMiddleware` testado via subclasse `TestableAuthMiddleware` (intercepta exit)
+
 ## Licença
 
 MIT

@@ -7,6 +7,8 @@
 
 // Carregar classes
 require_once __DIR__ . '/../src/Exception/MikrotikApiException.php';
+require_once __DIR__ . '/../src/Service/HttpTransport.php';
+require_once __DIR__ . '/../src/Service/CurlTransport.php';
 require_once __DIR__ . '/../src/Service/MikrotikClient.php';
 require_once __DIR__ . '/../src/Controller/AuthController.php';
 require_once __DIR__ . '/../src/Controller/DashboardController.php';
