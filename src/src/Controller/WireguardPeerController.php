@@ -323,7 +323,7 @@ class WireguardPeerController {
         $serverIp = explode('/', $peer['server_ip'])[0];
         $additionalRoutes = $peer['additional_routes'] ?? '';
         $configLinux = $this->generateLinuxConfig(
-            $peer['private_key'], $peer['server_public_key'], $serverEndpoint, $peer['listen_port'], $peer['allowed_address'], $additionalRoutes
+            $peer['private_key'], $peer['server_public_key'], $serverEndpoint, $peer['listen_port'], $peer['allowed_address'], $serverIp, $peer['network_cidr'], $additionalRoutes
         );
         $configWindows = $this->generateWindowsConfig(
             $peer['private_key'], $peer['server_public_key'], $serverEndpoint, $peer['listen_port'], $peer['allowed_address'], $serverIp, $peer['network_cidr'], $additionalRoutes
@@ -352,11 +352,13 @@ class WireguardPeerController {
         
         $serverEndpoint = parse_url(MIKROTIK_API_URL, PHP_URL_HOST);
         $additionalRoutes = $peer['additional_routes'] ?? '';
+        $serverIp = $peer['server_ip'] ?? '';
+        $serverIp = explode('/', $serverIp)[0]; // remover CIDR se houver
         $configLinux = $this->generateLinuxConfig(
-            $peer['private_key'], $peer['server_public_key'], $serverEndpoint, $peer['listen_port'], $peer['allowed_address'], $additionalRoutes
+            $peer['private_key'], $peer['server_public_key'], $serverEndpoint, $peer['listen_port'], $peer['allowed_address'], $serverIp, $peer['network_cidr'] ?? '', $additionalRoutes
         );
         $configWindows = $this->generateWindowsConfig(
-            $peer['private_key'], $peer['server_public_key'], $serverEndpoint, $peer['listen_port'], $peer['allowed_address'], $peer['server_ip'] ?? '', $peer['network_cidr'] ?? '', $additionalRoutes
+            $peer['private_key'], $peer['server_public_key'], $serverEndpoint, $peer['listen_port'], $peer['allowed_address'], $serverIp, $peer['network_cidr'] ?? '', $additionalRoutes
         );
         
         // Download de ambas as versões
@@ -390,19 +392,43 @@ class WireguardPeerController {
         string $serverEndpoint,
         int $serverPort,
         string $allowedAddress,
+        string $serverIp,
+        string $networkCidr,
         string $additionalRoutes = ''
     ): string {
-        // Montar AllowedIPs: IP do peer + rotas adicionais
-        $allowedIps = $allowedAddress;
+        // Todas as rotas: rede da interface + rotas adicionais
+        $allRoutes = [$networkCidr];
         if ($additionalRoutes !== '') {
-            $routes = array_filter(array_map('trim', explode(',', $additionalRoutes)));
-            $allowedIps .= ', ' . implode(', ', $routes);
+            $extra = array_filter(array_map('trim', explode(',', $additionalRoutes)));
+            $allRoutes = array_merge($allRoutes, $extra);
+        }
+        
+        // Montar AllowedIPs: IP do peer + todas as rotas
+        $allowedIps = $allowedAddress;
+        if (count($allRoutes) > 0) {
+            $allowedIps .= ', ' . implode(', ', $allRoutes);
+        }
+        
+        // Montar PostUp/PostDown: ip route add/del via %i
+        $postUpParts = [];
+        $postDownParts = [];
+        
+        // Rota para o servidor
+        $postUpParts[] = "ip route add {$serverIp} dev %i";
+        $postDownParts[] = "ip route del {$serverIp} dev %i";
+        
+        // Cada rede como rota via servidor
+        foreach ($allRoutes as $route) {
+            $postUpParts[] = "ip route add {$route} dev %i via {$serverIp}";
+            $postDownParts[] = "ip route del {$route} dev %i via {$serverIp}";
         }
         
         return "[Interface]\n"
              . "PrivateKey = {$privateKey}\n"
+             . "Table = off\n"
              . "Address = {$allowedAddress}\n"
-             . "DNS = 1.1.1.1, 8.8.8.8\n"
+             . "PostUp = " . implode(' && ', $postUpParts) . "\n"
+             . "PostDown = " . implode(' && ', $postDownParts) . "\n"
              . "\n"
              . "[Peer]\n"
              . "PublicKey = {$serverPublicKey}\n"
