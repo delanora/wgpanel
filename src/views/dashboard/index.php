@@ -24,7 +24,7 @@
     </div>
     
     <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div class="stat-icon icon-accent"><i class="fas fa-users"></i></div>
         <div class="stat-info">
             <h3><?= $data['active_peers'] ?> / <?= $data['total_peers'] ?></h3>
             <p>Peers Ativos</p>
@@ -40,7 +40,7 @@
     </div>
     
     <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-users-gear"></i></div>
+        <div class="stat-icon icon-accent"><i class="fas fa-users-gear"></i></div>
         <div class="stat-info">
             <h3><?= $data['active_users'] ?></h3>
             <p>Usuários do Sistema</p>
