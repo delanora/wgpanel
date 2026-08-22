@@ -22,8 +22,7 @@ log_error()   { echo -e "${RED}[ERRO]${NC} $1"; }
 # Configurações
 # ============================================
 APP_DIR="/var/www/wgpanel"
-DB_NAME="mikrotik_manager"
-DB_USER="admin"
+ENV_FILE="$APP_DIR/.env"
 
 # ============================================
 # Verificar se é root
@@ -32,6 +31,27 @@ if [ "$EUID" -ne 0 ]; then
     log_error "Execute como root: sudo bash update.sh"
     exit 1
 fi
+
+# ============================================
+# Ler configurações do .env
+# ============================================
+if [ ! -f "$ENV_FILE" ]; then
+    log_error "Arquivo .env não encontrado em $ENV_FILE"
+    log_error "Execute install.sh primeiro ou crie o .env manualmente"
+    exit 1
+fi
+
+# Função para ler valor do .env
+read_env() {
+    local key="$1"
+    local default="$2"
+    local value=$(grep -E "^${key}=" "$ENV_FILE" | cut -d'=' -f2- | tr -d '"' | tr -d "'")
+    echo "${value:-$default}"
+}
+
+DB_NAME=$(read_env "DB_NAME" "mikrotik_manager")
+DB_USER=$(read_env "DB_USER" "admin")
+APP_PORT=$(read_env "APP_PORT" "8080")
 
 echo ""
 echo -e "${BLUE}  ╔══════════════════════════════════════╗${NC}"
@@ -170,7 +190,7 @@ fi
 # ============================================
 log_info "Verificando se a aplicação responde..."
 sleep 2
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8080/" 2>/dev/null || echo "000")
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:$APP_PORT/" 2>/dev/null || echo "000")
 if [ "$HTTP_CODE" = "302" ] || [ "$HTTP_CODE" = "200" ]; then
     log_success "Aplicação respondendo (HTTP $HTTP_CODE)"
 else

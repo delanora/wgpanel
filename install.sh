@@ -38,15 +38,50 @@ check_root() {
 }
 
 # ============================================
-# Configurações editáveis
+# Configurações padrão (editáveis)
 # ============================================
 APP_DIR="/var/www/wgpanel"
 APP_PORT=8080
 DB_NAME="mikrotik_manager"
 DB_USER="admin"
-DB_PASS="CHANGED"
-ADMIN_EMAIL="admin@example.com"
-ADMIN_PASS="CHANGED"
+DB_PASS=""
+ADMIN_EMAIL=""
+ADMIN_PASS=""
+
+# ============================================
+# Coletar configurações do usuário
+# ============================================
+collect_config() {
+    echo -e "${YELLOW}Configure as credenciais do sistema:${NC}"
+    echo ""
+
+    read -p "  Email do admin [$ADMIN_EMAIL]: " input
+    ADMIN_EMAIL="${input:-$ADMIN_EMAIL}"
+
+    read -s -p "  Senha do admin: " input
+    DB_PASS="${input:-CHANGED_IN_HISTORY}"
+    ADMIN_PASS="$DB_PASS"
+    echo ""
+
+    read -p "  Usuário do banco [$DB_USER]: " input
+    DB_USER="${input:-$DB_USER}"
+
+    read -s -p "  Senha do banco [$DB_PASS]: " input
+    DB_PASS="${input:-$DB_PASS}"
+    echo ""
+
+    read -p "  Porta da aplicação [$APP_PORT]: " input
+    APP_PORT="${input:-$APP_PORT}"
+
+    echo ""
+    echo -e "${YELLOW}Configure as credenciais do Mikrotik:${NC}"
+    echo ""
+
+    read -p "  URL da API Mikrotik [http://]: " MIKROTIK_API_URL
+    read -p "  Usuário Mikrotik: " MIKROTIK_USER
+    read -s -p "  Senha Mikrotik: " MIKROTIK_PASS
+    echo ""
+}
 
 # ============================================
 # Etapa 1: Atualizar sistema
@@ -169,12 +204,12 @@ DB_USER=$DB_USER
 DB_PASS=$DB_PASS
 
 # Mikrotik Router API
-MIKROTIK_API_URL=http://YOUR_MIKROTIK_IP
+MIKROTIK_API_URL=$MIKROTIK_API_URL
 MIKROTIK_API_PORT=80
 
 # Mikrotik Credenciais
-MIKROTIK_USER=
-MIKROTIK_PASS=
+MIKROTIK_USER=$MIKROTIK_USER
+MIKROTIK_PASS=$MIKROTIK_PASS
 
 # Mikrotik Client
 MIKROTIK_TIMEOUT=10
@@ -183,6 +218,7 @@ MIKROTIK_LOG_ENABLED=true
 MIKROTIK_LOG_FILE=/tmp/mikrotik_api.log
 EOF
     
+    chmod 600 "$APP_DIR/.env"
     log_success "Arquivo .env configurado"
 }
 
@@ -302,7 +338,7 @@ print_summary() {
     echo ""
     echo -e "  ${BLUE}URL:${NC}            http://${LOCAL_IP}:${APP_PORT}"
     echo -e "  ${BLUE}Login:${NC}          $ADMIN_EMAIL"
-    echo -e "  ${BLUE}Senha:${NC}          $ADMIN_PASS"
+    echo -e "  ${BLUE}Senha:${NC}          (a que você definiu)"
     echo ""
     echo -e "  ${YELLOW}Arquivos:${NC}"
     echo -e "    Aplicação:  $APP_DIR"
@@ -314,6 +350,7 @@ print_summary() {
     echo -e "    reiniciar:  systemctl restart wgpanel"
     echo -e "    parar:      systemctl stop wgpanel"
     echo -e "    logs:       journalctl -u wgpanel -f"
+    echo -e "    atualizar:  sudo bash $APP_DIR/update.sh"
     echo ""
     echo -e "  ${RED}⚠  Altere a senha do admin após o primeiro login!${NC}"
     echo ""
@@ -341,6 +378,8 @@ main() {
         exit 0
     fi
     
+    echo ""
+    collect_config
     echo ""
     update_system
     install_deps
