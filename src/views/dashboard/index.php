@@ -52,8 +52,8 @@
 <div class="card" style="margin-bottom: 20px;">
     <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
         <h2><i class="fas fa-tower-broadcast"></i> Monitoramento de Latência</h2>
-        <button onclick="refreshLatency()" class="btn btn-ghost" id="latencyBtn" style="font-size: 12px;">
-            <i class="fas fa-sync-alt"></i> Atualizar
+        <button onclick="refreshLatency()" class="btn btn-ghost" id="latencyBtn" title="Atualizar latência">
+            <i class="fas fa-sync-alt"></i>
         </button>
     </div>
     <div class="card-body" style="padding: 0;">
@@ -305,7 +305,7 @@ function refreshDashboard() {
 function refreshLatency() {
     var btn = document.getElementById('latencyBtn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Pingando...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     
     fetch('/dashboard/collect-latency', { method: 'POST' })
         .then(function(r) { return r.json(); })
@@ -321,7 +321,7 @@ function refreshLatency() {
         .catch(function(err) {
             alert('Erro de conexão: ' + err);
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar';
+            btn.innerHTML = '<i class="fas fa-sync-alt"></i>';
         });
 }
 
